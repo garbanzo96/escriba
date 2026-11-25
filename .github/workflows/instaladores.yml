@@ -88,7 +88,7 @@ jobs:
           cp -R /tmp/escriba/Escriba.app /Applications/
           hdiutil detach /tmp/escriba || true
           codesign --verify --deep --strict /Applications/Escriba.app
-          lipo -archs /Applications/Escriba.app/Contents/Resources/bin/*
+          for f in /Applications/Escriba.app/Contents/Resources/bin/*; do echo "$f: $(lipo -archs "$f")"; done
       - name: Probar que transcribe
         run: /Applications/Escriba.app/Contents/MacOS/Escriba --autotest=recursos/muestra.wav
       - name: Recorrer la interfaz

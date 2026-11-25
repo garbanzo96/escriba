@@ -21,6 +21,7 @@ async function abrir() {
   });
   await app.evaluate(({ dialog }) => { dialog.showMessageBoxSync = () => 1; }); // «Cerrar» cuando pregunta
   const w = await app.firstWindow();
+  await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setIgnoreMouseEvents(true)); // que un clic de quien está en el computador no altere la prueba
   w.on('pageerror', e => errores.push(e.message));
   w.on('console', m => m.type() === 'error' && errores.push(m.text()));
   await w.waitForFunction(() => typeof pintarLista === 'function');
