@@ -38,7 +38,7 @@ if [ "$(uname)" = Darwin ]; then
 else
   cmake -B trabajo/avx2 -A x64 "${COMUN[@]}" "${AVX2[@]}" -DCMAKE_POLICY_DEFAULT_CMP0091=NEW -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
   # sin AVX2 (Celeron, Pentium, Atom): con Clang, porque MSVC no usa SSE y queda varias veces más lento
-  cmake -B trabajo/compat -A x64 -T ClangCL "${COMUN[@]}" -DGGML_SSE42=ON -DGGML_AVX=OFF -DGGML_AVX2=OFF -DGGML_FMA=OFF -DGGML_F16C=OFF -DGGML_BMI2=OFF -DCMAKE_POLICY_DEFAULT_CMP0091=NEW -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
+  cmake -B trabajo/compat -A x64 -T ClangCL "${COMUN[@]}" -DGGML_SSE42=ON -DGGML_AVX=OFF -DGGML_AVX2=OFF -DGGML_FMA=OFF -DGGML_F16C=OFF -DGGML_BMI2=OFF -DCMAKE_POLICY_DEFAULT_CMP0091=NEW -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DCMAKE_C_FLAGS="-DWIN32 -D_WINDOWS -msse4.2" -DCMAKE_CXX_FLAGS="-DWIN32 -D_WINDOWS -EHsc -msse4.2"
   for v in avx2 compat; do cmake --build trabajo/$v --config Release -j 4 --target whisper-cli; done
   cp trabajo/avx2/bin/Release/whisper-cli.exe bin/whisper-cli.exe
   cp trabajo/compat/bin/Release/whisper-cli.exe bin/whisper-cli-compat.exe

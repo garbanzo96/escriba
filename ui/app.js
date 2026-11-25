@@ -279,7 +279,8 @@ function pintarEstado() {
   c.classList.toggle('error', estado === 'error');
   if (estado === 'transcribiendo') {
     const pct = Math.round(progreso * 100) + '%';
-    if (!c.querySelector('.progreso')) c.replaceChildren('Transcribiendo', el('div', { class: 'progreso' }, el('i')), el('span', { class: 'pct' }), el('button', { class: 'quieto', onclick: () => api.cancelar(S.id) }, 'Detener'));
+    if (!c.querySelector('.progreso')) c.replaceChildren(el('span', { class: 'que' }), el('div', { class: 'progreso' }, el('i')), el('span', { class: 'pct' }), el('button', { class: 'quieto', onclick: () => api.cancelar(S.id) }, 'Detener'));
+    c.querySelector('.que').textContent = S.lento ? 'Transcribiendo. El procesador de este computador es muy básico: puede tardar muchas horas.' : 'Transcribiendo';
     c.querySelector('i').style.width = pct;
     c.querySelector('.pct').textContent = pct;
   } else if (estado === 'por-transcribir') {
