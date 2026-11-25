@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src escriba:; worker-src 'self'">
+<title>Escriba</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<svg width="0" height="0" class="simbolos" aria-hidden="true">
+  <symbol id="i-volver" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></symbol>
+  <symbol id="i-pausa" viewBox="0 0 24 24"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></symbol>
+  <symbol id="i-importar" viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></symbol>
+  <symbol id="i-puntos" viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="18.5" cy="12" r="1.4" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-exportar" viewBox="0 0 24 24"><path d="M12 4v10M8 10.5l4 4 4-4M5 19.5h14"/></symbol>
+  <symbol id="i-atras" viewBox="0 0 24 24"><path d="M9 7L4 12l5 5M4 12h10a6 6 0 0 1 6 6"/></symbol>
+  <symbol id="i-adelante" viewBox="0 0 24 24"><path d="M15 7l5 5-5 5M20 12H10a6 6 0 0 0-6 6"/></symbol>
+  <symbol id="i-logo" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="#1c6e5f"/><rect x="13" y="26" width="5" height="12" rx="2.5" fill="#fff"/><rect x="22" y="18" width="5" height="28" rx="2.5" fill="#fff"/><rect x="31" y="23" width="5" height="18" rx="2.5" fill="#fff"/><path d="M42 20h9M42 32h9M42 44h6" stroke="#bfe3d8" stroke-width="4" stroke-linecap="round"/></symbol>
+</svg>
+
+<!-- Lista -->
+<section id="v-lista" class="vista">
+  <header class="barra">
+    <div class="marca"><svg class="logo"><use href="#i-logo"/></svg><span>Escriba</span></div>
+    <button id="b-ayuda" class="quieto">Cómo usar</button>
+  </header>
+  <main class="hoja">
+    <h1>Mis entrevistas</h1>
+    <p class="bajada">Todo ocurre en este computador. Nada se sube a internet.</p>
+    <div class="acciones">
+      <button id="b-nueva" class="primario"><i class="punto"></i>Grabar una entrevista</button>
+      <button id="b-importar" class="secundario"><svg class="ic"><use href="#i-importar"/></svg>Abrir una grabación</button>
+    </div>
+    <ol id="lista"></ol>
+    <div id="vacia" class="vacia" hidden>
+      <p>Aquí aparecerán tus entrevistas. Puedes grabar una nueva con el micrófono o abrir una grabación que ya tengas en el computador (de WhatsApp, del celular o de cualquier tipo).</p>
+      <p>También puedes arrastrar el archivo hasta esta ventana.</p>
+    </div>
+  </main>
+</section>
+
+<!-- Grabar -->
+<section id="v-grabar" class="vista" hidden>
+  <header class="barra"><button id="g-volver" class="quieto"><svg class="ic"><use href="#i-volver"/></svg>Mis entrevistas</button></header>
+  <main class="grabar">
+    <input id="g-titulo" class="titulo-grande" placeholder="Título (por ejemplo: Entrevista a María, 24 de noviembre)" autocomplete="off" aria-label="Título">
+    <div id="g-reloj" class="reloj">00:00</div>
+    <div class="nivel" aria-hidden="true"><i id="g-nivel"></i></div>
+    <p id="g-aviso" class="aviso" role="status"></p>
+    <label class="micro">Micrófono <select id="g-micro"></select></label>
+    <div class="botones">
+      <button id="g-boton" class="boton-grabar" aria-label="Grabar"><i></i></button>
+      <span id="g-leyenda" class="leyenda">Grabar</span>
+    </div>
+    <div class="fila-final" hidden id="g-final">
+      <button id="g-terminar" class="primario">Terminar y transcribir</button>
+      <button id="g-descartar" class="quieto">Descartar</button>
+    </div>
+  </main>
+</section>
+
+<!-- Editor -->
+<section id="v-editor" class="vista" hidden>
+  <header class="barra">
+    <button id="e-volver" class="quieto" aria-label="Volver a mis entrevistas"><svg class="ic"><use href="#i-volver"/></svg>Mis entrevistas</button>
+    <input id="e-titulo" aria-label="Título" autocomplete="off" spellcheck="false">
+    <div class="menu-env">
+      <button id="e-exportar" class="secundario" aria-haspopup="menu" aria-expanded="false"><svg class="ic"><use href="#i-exportar"/></svg>Exportar</button>
+      <div id="m-exportar" class="menu" role="menu" hidden>
+        <button role="menuitem" data-exportar="word">Documento de Word (.docx)</button>
+        <button role="menuitem" data-exportar="texto">Texto simple (.txt)</button>
+        <hr>
+        <button role="menuitem" data-exportar="carpeta">Abrir la carpeta de esta entrevista</button>
+      </div>
+    </div>
+    <div class="menu-env">
+      <button id="e-mas" class="icono" aria-haspopup="menu" aria-expanded="false" aria-label="Más opciones"><svg class="ic"><use href="#i-puntos"/></svg></button>
+      <div id="m-mas" class="menu" role="menu" hidden>
+        <button role="menuitem" data-mas="ayuda">Cómo usar</button>
+        <button role="menuitem" data-mas="reiniciar">Volver a transcribir</button>
+        <hr>
+        <button role="menuitem" data-mas="borrar" class="peligro">Borrar entrevista</button>
+      </div>
+    </div>
+  </header>
+  <div id="e-estado" class="estado" hidden></div>
+  <main id="e-texto" class="texto" aria-label="Transcripción"></main>
+  <footer class="reproductor">
+    <div class="r-fila">
+      <button id="r-atras" class="icono" aria-label="Retroceder 3 segundos" title="Retroceder 3 segundos (Alt + ←)"><svg class="ic"><use href="#i-atras"/></svg></button>
+      <button id="r-play" class="boton-play" aria-label="Reproducir" title="Reproducir o pausar (Esc)"><svg class="ic"><use href="#i-play"/></svg></button>
+      <button id="r-adelante" class="icono" aria-label="Avanzar 3 segundos" title="Avanzar 3 segundos (Alt + →)"><svg class="ic"><use href="#i-adelante"/></svg></button>
+      <span id="r-ahora" class="t">00:00</span>
+      <input type="range" id="r-barra" min="0" max="1000" value="0" aria-label="Posición en la grabación">
+      <span id="r-total" class="t">00:00</span>
+      <label class="velocidad">Velocidad
+        <select id="r-vel" aria-label="Velocidad"><option value="0.5">0,5×</option><option value="0.75">0,75×</option><option value="1" selected>1×</option><option value="1.25">1,25×</option><option value="1.5">1,5×</option><option value="2">2×</option></select>
+      </label>
+    </div>
+    <audio id="audio" preload="metadata"></audio>
+  </footer>
+</section>
+
+<div id="pop" hidden></div>
+<div id="toast" role="status"></div>
+
+<dialog id="d-confirma">
+  <h2 id="dc-titulo"></h2>
+  <p id="dc-texto"></p>
+  <div class="dialogo-botones"><button class="quieto" id="dc-no">Cancelar</button><button class="primario" id="dc-si"></button></div>
+</dialog>
+
+<dialog id="d-ayuda">
+  <h2>Cómo usar Escriba</h2>
+  <ol>
+    <li><b>Graba o abre una grabación.</b> Si grabas, deja el computador cerca de quienes hablan. Al terminar, Escriba transcribe solo y el texto va apareciendo. Puede demorar tanto como dura la entrevista, según el computador.</li>
+    <li><b>Escucha y corrige.</b> Toca el minuto de un párrafo para oírlo desde ahí. El párrafo que suena se ilumina. Escribe directamente sobre el texto: se guarda solo.</li>
+    <li><b>Marca quién habla.</b> Toca la etiqueta de cada párrafo, o usa Alt + 1, Alt + 2… para asignar a la persona mientras escuchas.</li>
+    <li><b>Guarda el resultado.</b> El botón Exportar entrega un documento de Word o un texto simple.</li>
+  </ol>
+  <table>
+    <tr><td>Esc</td><td>Reproducir o pausar (al seguir, retrocede 1 segundo)</td></tr>
+    <tr><td>Alt + ← / →</td><td>Retroceder o avanzar 3 segundos</td></tr>
+    <tr><td>Alt + ↑ / ↓</td><td>Más rápido o más lento</td></tr>
+    <tr><td>Alt + 1, 2, 3…</td><td>Marcar quién habla: en el párrafo del cursor o, si no hay cursor, en el que está sonando</td></tr>
+    <tr><td>Enter</td><td>Partir un párrafo en dos en el cursor</td></tr>
+    <tr><td>Retroceso al inicio</td><td>Unir con el párrafo anterior</td></tr>
+  </table>
+  <p class="nota">La transcripción automática se equivoca. Whisper tiende a saltarse muletillas, repeticiones y titubeos: si los necesitas para tu análisis, agrégalos escuchando.</p>
+  <div class="dialogo-botones"><button class="primario" id="da-ok">Entendido</button></div>
+</dialog>
+
+<script src="app.js"></script>
+</body>
+</html>

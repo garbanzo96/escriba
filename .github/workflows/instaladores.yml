@@ -1,0 +1,109 @@
+# Construye los instaladores de Windows y Mac, los instala de verdad, los prueba y recién entonces los publica.
+name: Instaladores
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 120
+    defaults: { run: { shell: bash } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Modelos, Whisper y ffmpeg
+        run: ./construir/preparar.sh
+      - name: Construir el instalador
+        run: npx electron-builder --win --publish never
+      - name: Instalar sin preguntas, como lo haría una persona
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath "dist\Escriba-Windows.exe" -ArgumentList "/S" -Wait -PassThru
+          "instalador: $($p.ExitCode)"
+          $exe = "$env:LOCALAPPDATA\Programs\escriba\Escriba.exe"
+          if (-not (Test-Path $exe)) { Get-ChildItem "$env:LOCALAPPDATA\Programs" -Recurse -Depth 1; exit 1 }
+          "EJECUTABLE=$exe" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Probar que transcribe
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath $env:EJECUTABLE -ArgumentList "--autotest=recursos\muestra.wav" -WorkingDirectory $PWD -Wait -PassThru -RedirectStandardOutput salida.txt -RedirectStandardError errores.txt
+          Get-Content salida.txt; Get-Content errores.txt | Select-Object -Last 15
+          exit $p.ExitCode
+      - name: Probar la versión para procesadores antiguos
+        run: |
+          cd modelo
+          ../bin/whisper-cli-compat.exe -m ggml-large-v3-turbo-q5_0.bin -l es -f - -of x -mc 0 -sns -t 4 < ../recursos/muestra.wav
+      - name: Recorrer la interfaz
+        env: { CAPTURAS: capturas }
+        run: node pruebas/interfaz.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: capturas-windows, path: capturas, retention-days: 7, if-no-files-found: ignore }
+      - uses: actions/upload-artifact@v4
+        with: { name: windows, path: dist/Escriba-Windows.exe, retention-days: 2, compression-level: 0 }
+
+  mac:
+    runs-on: macos-15
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Modelos, Whisper y ffmpeg
+        run: ./construir/preparar.sh
+      - name: Construir el instalador
+        run: npx electron-builder --mac --universal --publish never
+      - name: Comprobar la firma local
+        run: codesign --verify --deep --strict --verbose=2 dist/mac-universal/Escriba.app
+      - uses: actions/upload-artifact@v4
+        with: { name: mac, path: dist/Escriba-Mac.dmg, retention-days: 2, compression-level: 0 }
+
+  probar-mac:
+    needs: mac
+    strategy:
+      fail-fast: false
+      matrix:
+        maquina: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.maquina }}
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with: { name: mac }
+      - name: Instalar desde el .dmg
+        run: |
+          hdiutil attach -nobrowse -mountpoint /tmp/escriba Escriba-Mac.dmg
+          cp -R /tmp/escriba/Escriba.app /Applications/
+          hdiutil detach /tmp/escriba || true
+          codesign --verify --deep --strict /Applications/Escriba.app
+          lipo -archs /Applications/Escriba.app/Contents/Resources/bin/*
+      - name: Probar que transcribe
+        run: /Applications/Escriba.app/Contents/MacOS/Escriba --autotest=recursos/muestra.wav
+      - name: Recorrer la interfaz
+        env: { CAPTURAS: capturas, EJECUTABLE: /Applications/Escriba.app/Contents/MacOS/Escriba }
+        run: node pruebas/interfaz.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: 'capturas-${{ matrix.maquina }}', path: capturas, retention-days: 7, if-no-files-found: ignore }
+
+  publicar:
+    needs: [windows, probar-mac]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions: { contents: write }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { pattern: '{windows,mac}', path: instaladores, merge-multiple: true }
+      - env: { GH_TOKEN: '${{ github.token }}' }
+        run: gh release create "$GITHUB_REF_NAME" instaladores/Escriba-Windows.exe instaladores/Escriba-Mac.dmg --title "Escriba ${GITHUB_REF_NAME#v}" --notes-file construir/notas.md

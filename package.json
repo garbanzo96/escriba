@@ -1,0 +1,126 @@
+{
+  "name": "escriba",
+  "productName": "Escriba",
+  "version": "1.0.0",
+  "description": "Graba y transcribe entrevistas en tu propio computador, sin enviar nada a internet.",
+  "author": "garbanzo96",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "prueba": "electron . --autotest=recursos/muestra.wav",
+    "prueba-interfaz": "node pruebas/interfaz.js",
+    "instalador": "electron-builder --publish never"
+  },
+  "dependencies": {
+    "docx": "9.15.2"
+  },
+  "devDependencies": {
+    "electron": "45.2.3",
+    "electron-builder": "26.18.1",
+    "playwright-core": "1.64.1"
+  },
+  "build": {
+    "appId": "cl.escriba.app",
+    "productName": "Escriba",
+    "copyright": "Licencia MIT",
+    "directories": {
+      "output": "dist",
+      "buildResources": "construir"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "lib/**/*",
+      "ui/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "bin",
+        "to": "bin"
+      },
+      {
+        "from": "modelo",
+        "to": "modelo"
+      },
+      "LICENCIAS.md"
+    ],
+    "electronLanguages": [
+      "es",
+      "es-419",
+      "es_419",
+      "en",
+      "en-US"
+    ],
+    "icon": "construir/icono.png",
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "artifactName": "Escriba-Mac.${ext}",
+      "category": "public.app-category.productivity",
+      "minimumSystemVersion": "13.0",
+      "identity": "-",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "x64ArchFiles": "Contents/Resources/bin/**",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "Escriba usa el micrófono para grabar tus entrevistas. El audio queda solo en este computador.",
+        "CFBundleDevelopmentRegion": "es"
+      }
+    },
+    "dmg": {
+      "title": "Escriba",
+      "background": "construir/fondo-dmg.png",
+      "iconSize": 104,
+      "window": {
+        "width": 640,
+        "height": 440
+      },
+      "contents": [
+        {
+          "x": 168,
+          "y": 205
+        },
+        {
+          "x": 472,
+          "y": 205,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "writeUpdateInfo": false
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "Escriba-Windows.${ext}"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "runAfterFinish": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "Escriba",
+      "installerLanguages": [
+        "es_ES"
+      ],
+      "language": "3082",
+      "differentialPackage": false,
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}

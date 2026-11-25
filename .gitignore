@@ -1,0 +1,7 @@
+node_modules/
+dist/
+bin/
+modelo/
+.DS_Store
+*.log
+trabajo/
