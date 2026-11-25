@@ -2,8 +2,6 @@
 
 Escriba graba entrevistas y las transcribe en tu propio computador. Nada se sube a internet: el audio y el texto no salen de tu equipo, y funciona sin conexión una vez instalado.
 
-![Una entrevista transcrita en Escriba, con el reproductor abajo](docs/captura.png)
-
 ## Descargar
 
 | Tu computador | Archivo |
@@ -12,6 +10,8 @@ Escriba graba entrevistas y las transcribe en tu propio computador. Nada se sube
 | **Mac** con macOS 13 o posterior | [Descargar Escriba para Mac](https://github.com/garbanzo96/escriba/releases/latest/download/Escriba-Mac.dmg) |
 
 El archivo es grande (entre 700 y 900 MB) porque trae todo adentro, también el modelo que reconoce la voz. Puede demorar varios minutos en bajar. No hay que instalar ni configurar nada más.
+
+![Una entrevista transcrita en Escriba, con el reproductor abajo](docs/captura.png)
 
 ## Instalar en Windows
 
