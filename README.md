@@ -80,7 +80,7 @@ Escriba no distingue las voces por sí sola: quién habla se marca a mano.
 
 ## Cuánto demora
 
-Depende del computador. En un Mac reciente, una hora de entrevista toma unos 10 minutos. En un notebook con Windows puede tomar más o menos lo mismo que dura la entrevista, y más si es antiguo. Conviene dejarlo enchufado y con otros programas cerrados.
+Depende del computador. En un Mac reciente, una hora de entrevista toma unos 10 minutos. En un notebook con Windows puede tomar más o menos lo mismo que dura la entrevista, y más si es antiguo. En equipos muy básicos (procesadores Celeron, Pentium o Atom) puede tomar muchas horas: ahí conviene dejarlo transcribiendo en la noche. Déjalo enchufado y con otros programas cerrados.
 
 Se necesitan 8 GB de memoria y unos 3 GB libres en el disco. Cada hora grabada ocupa unos 350 MB.
 

@@ -37,13 +37,14 @@ jobs:
           $p = Start-Process -FilePath $env:EJECUTABLE -ArgumentList "--autotest=recursos\muestra.wav" -WorkingDirectory $PWD -Wait -PassThru -RedirectStandardOutput salida.txt -RedirectStandardError errores.txt
           Get-Content salida.txt; Get-Content errores.txt | Select-Object -Last 15
           exit $p.ExitCode
-      - name: Probar la versión para procesadores antiguos
-        run: |
-          cd modelo
-          ../bin/whisper-cli-compat.exe -m ggml-large-v3-turbo-q5_0.bin -l es -f - -of x -mc 0 -sns -t 4 < ../recursos/muestra.wav
       - name: Recorrer la interfaz
         env: { CAPTURAS: capturas }
         run: node pruebas/interfaz.js
+      - name: Probar la versión para procesadores antiguos
+        timeout-minutes: 12
+        run: |
+          cd modelo
+          time ../bin/whisper-cli-compat.exe -m ggml-large-v3-turbo-q5_0.bin -l es -f - -of x -mc 0 -sns -t 4 < ../recursos/muestra.wav
       - uses: actions/upload-artifact@v4
         if: always()
         with: { name: capturas-windows, path: capturas, retention-days: 7, if-no-files-found: ignore }
