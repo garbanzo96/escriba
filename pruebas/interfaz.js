@@ -13,7 +13,7 @@ fs.copyFileSync(process.env.AUDIO || path.join(raiz, 'recursos', 'muestra.wav'),
 
 const errores = [];
 async function abrir() {
-  const extra = ['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'];
+  const extra = ['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream', '--disable-audio-output']; // micrófono y parlantes simulados
   const app = await _electron.launch({
     executablePath: process.env.EJECUTABLE || require('electron'),
     args: process.env.EJECUTABLE ? extra : [raiz, ...extra],

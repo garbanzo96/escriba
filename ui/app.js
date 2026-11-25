@@ -102,6 +102,7 @@ function abrirGrabar() {
   listarMicros();
   $('#g-titulo').focus();
 }
+const CONSEJO = 'No cierres la tapa del computador mientras grabas.';
 function aviso(txt, error) { const a = $('#g-aviso'); a.textContent = txt; a.classList.toggle('error', !!error); }
 async function listarMicros() {
   try {
@@ -127,6 +128,7 @@ async function abrirCaptura() {
   await ctx.resume();
   nodo.port.onmessage = e => recibir(e.data);
   stream.getAudioTracks()[0].onended = () => { if (g.estado === 'grabando') perdioMicro('El micrófono se desconectó. Lo grabado está guardado: conecta el micrófono y pulsa Seguir.'); };
+  ctx.onstatechange = () => { if (g.ctx === ctx && ctx.state !== 'running') ctx.resume().catch(() => {}); };
   Object.assign(g, { ctx, stream });
   listarMicros();
 }
@@ -176,7 +178,7 @@ async function empezar() {
     }
     g.ultimoSonido = performance.now();
     g.estado = 'grabando';
-    aviso('');
+    aviso(CONSEJO);
     pintarGrabar();
   } catch (e) { cerrarCaptura(); avisoMicro(e); }
   g.ocupado = false;
@@ -194,6 +196,7 @@ function pausar() {
   enviarAudio();
   cerrarCaptura(); // en pausa no se retiene el micrófono
   g.estado = 'pausa';
+  aviso('');
   pintarGrabar();
 }
 function pintarGrabar() {
@@ -233,7 +236,7 @@ function cuadroGrabar() {
     $('#g-nivel').style.width = Math.round((g.estado === 'grabando' ? g.nivel : 0) * 100) + '%';
     if (g.estado === 'grabando') {
       const sin = performance.now() - g.ultimoSonido > 4000;
-      if (sin !== g.sinSonido) { g.sinSonido = sin; aviso(sin ? 'No llega sonido del micrófono. Revisa que esté conectado y que no esté silenciado.' : '', sin); }
+      if (sin !== g.sinSonido) { g.sinSonido = sin; aviso(sin ? 'No llega sonido del micrófono. Revisa que esté conectado y que no esté silenciado.' : CONSEJO, sin); }
     }
   }
   requestAnimationFrame(cuadroGrabar);

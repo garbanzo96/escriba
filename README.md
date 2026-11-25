@@ -34,7 +34,7 @@ El paso 4 se hace una sola vez. El aviso aparece porque Escriba es gratuita y no
 
 ## Usar Escriba
 
-**Para grabar:** pulsa **Grabar una entrevista**, escribe un título y pulsa el botón rojo. Puedes pausar y seguir. Al final pulsa **Terminar y transcribir**.
+**Para grabar:** pulsa **Grabar una entrevista**, escribe un título y pulsa el botón rojo. Puedes pausar y seguir. No cierres la tapa del computador mientras grabas, porque se duerme y deja de grabar. Al final pulsa **Terminar y transcribir**.
 
 **Si ya tienes la grabación** (del celular, de WhatsApp, de una grabadora): pulsa **Abrir una grabación**, o arrastra el archivo hasta la ventana. Sirve casi cualquier formato de audio o video.
 
